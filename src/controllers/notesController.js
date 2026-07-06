@@ -7,7 +7,7 @@ export const getAllNotes = async (req, res, next) => {
     res.status(200).json(notes);
   } catch (err) {
     next(err); 
-  }
+  }     
 };
 
 export const getNoteById = async (req, res, next) => {
