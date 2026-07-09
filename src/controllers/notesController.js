@@ -76,7 +76,7 @@ export const deleteNote = async (req, res, next) => {
   try {
     const note = await Note.findByIdAndDelete(req.params.noteId);
     if (!note) throw createHttpError(404, "Note not found");
-    res.status(204).send();
+    res.status(200).json(note);
   } catch (err) {
     next(err);
   }

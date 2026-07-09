@@ -13,7 +13,7 @@ export const getAllNotesSchema = celebrate({
 
 export const noteIdSchema = celebrate({
   [Segments.PARAMS]: Joi.object({
-    noteId: Joi.string().custom((value, helpers) => {
+    noteId: Joi.string().required().custom((value, helpers) => {
       if (!mongoose.isValidObjectId(value)) {
         return helpers.error("any.invalid");
       }
@@ -32,7 +32,7 @@ export const createNoteSchema = celebrate({
 
 export const updateNoteSchema = celebrate({
   [Segments.PARAMS]: Joi.object({
-    noteId: Joi.string().custom((value, helpers) => {
+    noteId: Joi.string().required().custom((value, helpers) => {
       if (!mongoose.isValidObjectId(value)) {
         return helpers.error("any.invalid");
       }
