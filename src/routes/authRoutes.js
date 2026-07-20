@@ -1,32 +1,33 @@
-import createHttpError from "http-errors";
-import { Session } from "../models/session.js";
-import { User } from "../models/user.js";
+import { Router } from "express";
+import { celebrate, Segments } from "celebrate";
+import {
+  registerUser,
+  loginUser,
+  refreshUserSession,
+  logoutUser
+} from "../controllers/authController.js";
+import {
+  registerUserSchema,
+  loginUserSchema
+} from "../validations/authValidation.js";
 
-export const authenticate = async (req, res, next) => {
-  try {
-    const { accessToken, sessionId } = req.cookies;
+const router = Router();
 
-    if (!accessToken || !sessionId) {
-      throw createHttpError(401, "Missing access token or sessionId");
-    }
+router.post(
+  "/auth/register",
+  celebrate({ [Segments.BODY]: registerUserSchema }),
+  registerUser
+);
 
-    const session = await Session.findOne({ _id: sessionId, accessToken });
-    if (!session) {
-      throw createHttpError(401, "Session not found");
-    }
+router.post(
+  "/auth/login",
+  celebrate({ [Segments.BODY]: loginUserSchema }),
+  loginUser
+);
 
-    if (session.accessTokenValidUntil < new Date()) {
-      throw createHttpError(401, "Access token expired");
-    }
+router.post("/auth/refresh", refreshUserSession);
 
-    const user = await User.findById(session.userId);
-    if (!user) {
-      throw createHttpError(401);
-    }
+router.post("/auth/logout", logoutUser);
 
-    req.user = user;
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
+export default router;
+
