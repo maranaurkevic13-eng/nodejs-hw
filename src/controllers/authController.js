@@ -51,6 +51,7 @@ export const refreshUserSession = async (req, res, next) => {
     const session = await Session.findOne({ _id: sessionId, refreshToken });
     if (!session) throw createHttpError(401, "Session not found");
 
+    // Перевірка строку дії refreshToken
     if (session.refreshTokenValidUntil < new Date()) {
 
       await Session.deleteOne({ _id: session._id });
